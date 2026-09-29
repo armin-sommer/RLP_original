@@ -1,0 +1,22 @@
+# @package data
+# the authors' expert pool, read directly as HDF5
+cache_dir: null
+image_size: 224
+action_stats: null
+train_split: 0.9
+train_episodes: 16000  # the benchmark draws its tasks from the episodes above
+loader:
+  batch_size: 128
+  num_workers: 6
+  drop_last: true
+  persistent_workers: true
+  prefetch_factor: 3
+  pin_memory: true
+  shuffle: true
+dataset:
+  name: ${oc.env:RP1_DATA_HOME,${oc.env:HOME}/.cache/rp1}/datasets/pusht/pusht_expert_train.h5
+  num_steps: 4
+  frameskip: 5
+  keys_to_load: [pixels, action]
+  keys_to_cache: [action]
+  keys_to_merge: {}

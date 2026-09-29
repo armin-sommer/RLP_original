@@ -1,0 +1,17 @@
+# @package core.agent.solver
+# n_steps, topk and var_scale belong to the CEM base class and are unused.
+_target_: rp1.core.agent.solver.DMPOSolver
+batch_size: 1
+num_samples: 256  # informational; the checkpoint's sample count wins
+var_scale: 1.0
+n_steps: 0
+topk: 30
+checkpoint:
+  _target_: rp1.training.harness.checkpointing.load_planner
+  path: ???
+  value_path: null  # override the value recorded in the checkpoint
+iters: null  # inner-loop iterations; null = the trained count
+mppi_mode: false  # bypass the learned heads: the MPPI update DMPO learns a residual on
+cost_chunk: 0  # rollout chunk size for the sampled plans; 0 = one batch
+report_cost: false  # score the final mean, at one extra rollout per decision
+graphed: false  # CUDA-graph the sampled-cost evaluation; needs a static batch

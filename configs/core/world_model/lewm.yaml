@@ -1,0 +1,48 @@
+# @package core.world_model
+name: lewm
+checkpoint: assets/core/world_model/cube_lewm
+architecture:
+  _target_: stable_worldmodel.wm.lewm.LeWM
+  encoder:
+    _target_: stable_pretraining.backbone.utils.vit_hf
+    size: tiny
+    patch_size: 14
+    image_size: 224
+    pretrained: false
+    use_mask_token: false
+  predictor:
+    _target_: stable_worldmodel.wm.lewm.module.Predictor
+    num_frames: 3
+    input_dim: 192
+    hidden_dim: 192
+    output_dim: 192
+    depth: 6
+    heads: 16
+    mlp_dim: 2048
+    dim_head: 64
+    dropout: 0.1
+    emb_dropout: 0.0
+  action_encoder:
+    _target_: stable_worldmodel.wm.lewm.module.Embedder
+    input_dim: 0  # derived from dataset action width x frameskip
+    emb_dim: 192
+  projector:
+    _target_: stable_worldmodel.wm.lewm.module.MLP
+    input_dim: 192
+    output_dim: 192
+    hidden_dim: 2048
+    norm_fn:
+      _target_: torch.nn.BatchNorm1d
+      _partial_: true
+  pred_proj:
+    _target_: stable_worldmodel.wm.lewm.module.MLP
+    input_dim: 192
+    output_dim: 192
+    hidden_dim: 2048
+    norm_fn:
+      _target_: torch.nn.BatchNorm1d
+      _partial_: true
+history_size: 3
+num_predictions: 1
+rollout_length: 0
+rollout_weight: 1.0

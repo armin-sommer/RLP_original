@@ -1,0 +1,9 @@
+# @package environment
+env_name: swm/ReacherDMControl-v0
+record_path: null
+num_envs: ${benchmark.num_episodes}
+task: qpos_match
+success_threshold: null  # first-hit tolerance in radians (worst joint) replacing the
+                         # env's own 0.05 termination test; the paper's Reacher
+                         # table reports tau=0.1 and tau=0.05 columns
+success_key: qpos

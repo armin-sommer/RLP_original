@@ -1,0 +1,6 @@
+# @package core.agent.value
+kind: metric
+checkpoints: ???
+mode: replacement
+blend_weight: 1.0
+deadline_mode: terminal

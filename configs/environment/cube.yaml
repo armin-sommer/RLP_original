@@ -1,0 +1,11 @@
+# @package environment
+env_name: swm/OGBCube-v0
+record_path: null
+num_envs: ${benchmark.num_episodes}
+env_type: single
+ob_type: states
+multiview: false
+width: 224
+height: 224
+visualize_info: false
+terminate_at_goal: true

@@ -1,0 +1,9 @@
+# @package _global_
+defaults:
+  - tworoom_h5
+  - /core/world_model: pldm
+  - override /core/agent/policy: world_model
+  - _self_
+core:
+  world_model:
+    checkpoint: assets/core/world_model/tworoom_pldm

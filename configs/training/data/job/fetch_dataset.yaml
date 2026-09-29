@@ -1,0 +1,12 @@
+# @package _global_
+defaults:
+  - /utils/logging: default
+  - _self_
+entrypoint: {_target_: rp1.training.data.job.fetch_dataset.run}
+preparation:
+  dataset: ogb_cube
+  cache_root: null
+  dry_run: false
+  force: false
+  max_workers: 4
+  min_free_gib: 2.0

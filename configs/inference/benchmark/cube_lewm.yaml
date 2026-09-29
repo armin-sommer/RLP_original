@@ -1,0 +1,6 @@
+# @package _global_
+defaults:
+  - cube
+  - /core/world_model: lewm
+  - override /core/agent/policy: world_model
+  - _self_

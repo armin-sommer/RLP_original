@@ -1,0 +1,72 @@
+# The paper's configuration (Table 6) for every environment and world model. The value stage's
+# settings are below; the planner's are the method's own (configs/methods/<method>/train.yaml), and
+# training.planner.* overrides them.
+defaults:
+  - /utils/logging: default
+  - _self_
+entrypoint: {_target_: rp1.training.phases.agent.pipeline.run}
+runtime:
+  device: auto
+  seed: 0
+training:
+  wm: ???
+  dataset: ???
+  method: rp1          # a package under rp1.methods, configured by configs/methods/<method>/
+  name: rp1
+  frameskip: 5
+  actor_phases: 1       # residue classes of the stride kept in the planner's block cache
+  state_key: null
+  train_episodes: 8000
+  train_res: null
+  cache_directory: ${oc.env:RP1_DATA_HOME,${oc.env:HOME}/.cache/rp1}/caches
+  stages: [cache, subsample, actions, value, planner]
+  teacher: null         # an existing value to train the planner against, in place of the value stage
+  gamma: 0.98           # discount of the offline value and the co-trained critic: 0.98 for h25, 0.99 for h100
+
+# overrides of the metric phase, which trains the offline value
+  value:
+    learner: td           # l2 plans against the parameter-free latent distance, CEM's objective
+    steps: 18000          # step cap; the snapshots every save_every are the candidate teachers
+    save_every: 3000
+    batch_size: 1024
+    gamma: ${..gamma}
+    expectile: 0.03
+    n_step: 1
+    p_cross: 0.3
+    depth: null           # value-head depth; null keeps the value config's
+    head: null            # quasimetric | iqe | mlp; mlp with expectile 0.5 is plain goal-conditioned TD
+    symmetric: null
+    max_episodes: null
+    window_frames: null   # a window value stacks this many frames; the planner inherits it
+    window_lag: null      # must equal frameskip whenever window_frames >= 2
+    near_frac: null
+    near_max: null
+
+# overrides of the method's train phase, which trains the planner (rp1 co-trains the value);
+# null keeps the method's setting
+  planner:
+    gamma: ${..gamma}
+    steps: null
+    batch: null
+    actor_lr: null
+    actor_lr_final: null
+    mean_weight: null
+    max_delta: null
+    p_cross: null
+    band_mix: null
+    replay_prob: null
+    n_step: null
+    expectile: null
+    expectile_final: null
+    ac_weight: null
+    critic_lr: null
+    critic_lr_final: null
+    td_batch: null
+    freeze_critic_frac: null
+    expand_weight: null
+    action_limit: null
+    iterations: null
+    ckpt_every: null
+    near_frac: null
+    near_max: null
+    max_episodes: null

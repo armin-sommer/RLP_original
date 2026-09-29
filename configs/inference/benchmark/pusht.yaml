@@ -1,0 +1,22 @@
+# @package _global_
+# Success is the environment's DINO-WM criterion: agent and block within 20 px
+# and the block within 20 degrees of the goal.
+defaults:
+  - /environment: pusht
+  - /data: pusht
+  - /core/agent/policy: random
+  - /core/agent/solver: cem
+  - /core/agent/value: latent
+  - _self_
+benchmark:
+  # held out: the agent trains on episodes 0-15999 (training.train_episodes=16000)
+  episode_range: "16000:18685"
+  callables:
+    - method: _set_state
+      args:
+        state: {value: state}
+    - method: _set_goal_state
+      args:
+        goal_state: {value: goal_state}
+output:
+  filename: pusht_results.txt

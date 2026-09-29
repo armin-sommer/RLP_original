@@ -1,0 +1,8 @@
+defaults:
+  - /utils/logging: default
+  - _self_
+entrypoint: {_target_: rp1.inference.selection.run}
+selection:
+  runs: ???                         # directories holding every evaluation run of one cell
+  selection_draws: [48, 49, 50, 51]
+  report_draws: [42, 43, 44]

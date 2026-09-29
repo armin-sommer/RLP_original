@@ -1,0 +1,37 @@
+# @package _global_
+defaults:
+  - /core/agent/value: temporal_distance
+  - /utils/logging: default
+  - _self_
+entrypoint: {_target_: rp1.training.phases.agent.metric.run}
+runtime:
+  device: auto
+  seed: 0
+training:
+  cache: ???
+  cache_mmap: true
+  window_frames: 1
+  window_lag: 1
+  near_frac: 0.0         # td: fraction of in-episode hindsight goals drawn 1..near_max steps ahead
+  near_max: 3
+  max_episodes: null     # train on source episodes [0, N) of the cache
+  learner: td
+  steps: 5000
+  batch_size: 1024
+  scale: null
+  max_delta: null
+  learning_rate: 1e-3
+  weight_decay: 1e-4
+  n_buckets: 10
+  huber_beta: 1.0
+  gamma: 1.0
+  contrastive_gamma: 0.99
+  expectile: 0.7
+  target_update_rate: 0.005
+  n_step: 5
+  save_every: 0          # td: also save <checkpoint>_step<N> every N steps
+  p_cross: 0.3
+  no_balanced: false
+  temperature: 1.0
+output:
+  checkpoint: value

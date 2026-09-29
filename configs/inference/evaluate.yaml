@@ -1,0 +1,28 @@
+defaults:
+  - /utils/logging: default
+  - _self_
+  - benchmark: cube_lewm
+entrypoint:
+  _target_: rp1.inference.benchmark.run
+runtime:
+  seed: 42
+  device: auto
+  compile: false
+  bfloat16: false
+planning:
+  horizon: 5
+  receding_horizon: 5
+  history_len: 1
+  action_block: 5
+  warm_start: true
+  budget: 50
+  deadline: null
+benchmark:
+  num_episodes: 50
+  goal_offset_steps: 25
+  image_size: 224
+  train_resolution: null
+  cross_wall: false
+  episode_range: null
+output:
+  filename: results.txt

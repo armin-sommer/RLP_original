@@ -1,0 +1,9 @@
+# @package _global_
+defaults:
+  - reacher
+  - /core/world_model: lewm
+  - override /core/agent/policy: world_model
+  - _self_
+core:
+  world_model:
+    checkpoint: assets/core/world_model/reacher_lewm

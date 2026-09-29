@@ -1,0 +1,13 @@
+# @package _global_
+# PushT on the released LeWM (`quentinll/lewm-pusht`), whose weights use the
+# transformers-4 ViT key names: convert them with `pixi run prepare job=convert_pldm`,
+# pair them with the release config.json, and pass the directory as
+# core.world_model.checkpoint.
+defaults:
+  - pusht
+  - /core/world_model: lewm
+  - override /core/agent/policy: world_model
+  - _self_
+core:
+  world_model:
+    checkpoint: ???

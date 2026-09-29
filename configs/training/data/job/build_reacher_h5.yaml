@@ -1,0 +1,10 @@
+# @package _global_
+defaults:
+  - /utils/logging: default
+  - _self_
+entrypoint: {_target_: rp1.training.data.job.build_reacher_h5.run}
+preparation:
+  dataset: dmc/reacher_random.lance
+  train_out: ???
+  eval_out: ???
+  eval_episodes: 1024

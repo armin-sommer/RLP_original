@@ -1,0 +1,3 @@
+# @package core.agent.policy
+kind: no_move
+checkpoint: null

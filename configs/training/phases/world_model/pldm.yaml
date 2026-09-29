@@ -1,0 +1,37 @@
+# @package _global_
+defaults:
+  - /data: pusht_lewm
+  - /core/world_model: lewm
+  - /utils/logging: default
+  - _self_
+entrypoint:
+  _target_: rp1.training.phases.world_model.pldm.run
+runtime:
+  seed: 3072
+  device: auto
+training:
+  initial_weights: null
+  max_skipped_gradients: null
+  idm_hidden_dim: 512
+  trainer:
+    max_epochs: 20
+    devices: auto
+    accelerator: auto
+    precision: bf16-mixed
+    gradient_clip_val: 1.0
+  optimizer:
+    type: AdamW
+    lr: 5e-5
+    weight_decay: 1e-3
+  loss:  # the authors' weights
+    std: {enabled: true, weight: 18.0}
+    std_t: {enabled: true, weight: 0.7}
+    cov: {enabled: true, weight: 12.0}
+    cov_t: {enabled: true, weight: 0.0}
+    temp_align: {enabled: true, weight: 0.2}
+    idm: {enabled: true, weight: 0.0}
+    temp_straight: {enabled: false, weight: 0.1}
+output:
+  model_name: pldm_pusht
+  checkpoint_epoch_interval: 1
+  save_every_steps: 0

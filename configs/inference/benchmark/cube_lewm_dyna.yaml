@@ -1,0 +1,10 @@
+# @package _global_
+# Table 3, row d
+defaults:
+  - cube
+  - /core/world_model: lewm
+  - override /core/agent/policy: world_model
+  - _self_
+core:
+  world_model:
+    checkpoint: assets/core/world_model/cube_lewm_dyna

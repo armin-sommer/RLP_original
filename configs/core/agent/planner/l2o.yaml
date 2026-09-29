@@ -1,0 +1,18 @@
+# @package core.agent.planner
+# hyperparameters from the paper's implementation details (arXiv:2212.02603 Sec. IV)
+horizon: 5
+iterations: 4          # num_samples x iterations matches DMPO's rollout budget
+num_samples: 64        # fixes the network's input width
+hidden: 1024           # two ReLU hidden layers (reference: 1024-4096 by task size)
+action_limit: 2.5
+init_std: 1.0          # fixed diagonal sampling covariance (paper: no adaptation)
+dropout: 0.1           # reference dropout probability
+learn_std: false       # paper formulation gates the covariance too; experiments fix it
+gate_bias: 0.0         # gate-head bias init (0.0 = paper-plain: untrained gate is 0.5)
+init_scale: 0.001      # last-layer init N(0, init_scale)
+halton: true           # fixed quasi-random sample set
+seed_val: 0            # sample-set seed
+temperature: 0.05      # the DAgger expert's MPPI softmax temperature
+step_size: 0.8         # the DAgger expert's dynamic-mirror-descent step size
+scale_costs: true      # min-max scale costs inside the expert's softmax
+expert_samples: 512    # the expert's sample budget (paper: expert N >> learner M)

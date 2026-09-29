@@ -1,0 +1,94 @@
+[workspace]
+authors = ["Armin SOMMER"]
+channels = ["https://prefix.dev/conda-forge"]
+name = "rp1"
+platforms = [{ platform = "osx-arm64", macos = "14.0" }, "linux-64"]
+version = "0.1.0"
+
+[tasks]
+pretrain = "python -m rp1.training.pretrain"
+posttrain = "python -m rp1.training.posttrain"
+evaluate = "python -m rp1.inference.evaluate"
+select = "python -m rp1.inference.selection"
+prepare = "python -m rp1.training.data.prepare"
+
+[dependencies]
+python = "3.13.*"
+# OGBench requires labmaze; conda-forge provides a Python 3.13 native build,
+# while PyPI's labmaze sdist requires a separately installed Bazel.
+labmaze = "==1.0.6"
+fsspec = "<=2026.6.0"
+scikit-learn = ">=1.7"
+pip = ">=25"
+
+[pypi-options]
+# Linux receives the H100-compatible CUDA wheel. macOS uses conda-forge's CPU
+# build so PyTorch and the scientific stack share one OpenMP runtime.
+index-url = "https://download.pytorch.org/whl/cu126"
+extra-index-urls = ["https://pypi.org/simple/"]
+index-strategy = "first-index"
+
+[pypi-dependencies]
+rp1 = { path = ".", editable = true }
+hatchling = ">=1.31"
+datasets = ">=4.0"
+h5py = ">=3.16"
+hdf5plugin = ">=6.0"
+huggingface-hub = ">=1.26"
+hydra-core = ">=1.3.2"
+imageio = { version = ">=2.37", extras = ["ffmpeg"] }
+lightning = ">=2.6"
+loguru = ">=0.7"
+numpy = ">=2.3"
+ogbench = ">=1.2"
+opencv-python-headless = ">=4.12"
+pillow = ">=11"
+pylance = ">=9"
+pygame = ">=2.6"
+pymunk = ">=7.2"
+shapely = ">=2.1"
+stable-pretraining = "==0.1.7"
+stable-worldmodel = { version = "==0.1.1", extras = ["train"] }
+tabulate = ">=0.9"
+torchmetrics = ">=1.9"
+tqdm = ">=4.67"
+wandb = ">=0.28.1"
+zstandard = ">=0.23"
+
+[target.linux-64.pypi-dependencies]
+torch = "==2.7.1"
+torchvision = "==0.22.1"
+
+[target.linux-64.dependencies]
+mujoco = "==3.10.0"
+
+[target.osx-arm64.dependencies]
+pytorch = "==2.7.1"
+torchvision = "==0.22.1"
+
+[feature.dev.pypi-dependencies]
+matplotlib = ">=3.10"
+prek = ">=0.4.11"
+pytest = ">=9.1.1"
+pytest-testmon = ">=2.2"
+pytest-timeout = ">=2.3"
+pytest-xdist = ">=3.8"
+ruff = ">=0.16"
+ty = ">=0.0.64"
+
+[feature.dev.tasks]
+format = "ruff format src tests"
+format-check = "ruff format --check src tests"
+lint = "ruff check src tests"
+typecheck = "ty check src tests"
+test = "pytest"
+# `--testmon-forceselect` and not `--testmon`: testmon switches its selection off whenever `-m` is
+# passed, and `addopts` always passes `-m "not slow"`. Forcing it intersects the two instead.
+test-changed = "pytest --testmon-forceselect"
+test-slow = "pytest -m slow"
+check = { depends-on = ["format-check", "lint", "typecheck", "test"] }
+hooks = "prek install"
+
+[environments]
+default = { features = [], solve-group = "default" }
+dev = { features = ["dev"], solve-group = "default" }

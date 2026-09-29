@@ -1,0 +1,41 @@
+# @package _global_
+# Offline DMPO: the paper's PPO objective closed inside the frozen world model,
+# with no environment interaction.
+defaults:
+  - /core/agent/planner: dmpo
+  - /core/agent/value: temporal_distance
+  - /utils/logging: default
+  - _self_
+entrypoint: {_target_: rp1.training.phases.agent.dmpo_ppo.run}
+runtime:
+  device: auto
+  seed: 0
+training:
+  wm: ???
+  cache: ???         # latent cache at one row per action block
+  h5: ???            # the build_action_h5 job's output
+  init_value: ???    # the frozen offline value (value_td): reward and plan cost
+  cache_mmap: true
+  ppo_iterations: 400    # policy-improvement rounds (reference: ~1000 on-system)
+  save_every: 0          # also save a planner snapshot every N rounds
+  batch: 16              # imagined problems per round
+  decisions: 4           # closed-loop decisions per imagined episode
+  receding: 5            # plan blocks executed per decision (the eval protocol)
+  frameskip: 5
+  max_delta: 10
+  p_cross: 0.3
+  # gamma through critic_hidden follow the reference implementation unless noted
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_epsilon: 0.2
+  entropy_penalty: 0.0
+  ppo_epochs: 4
+  minibatch: 32
+  actor_lr: 1e-5         # reference used 1e-6 with far more on-system data
+  critic_lr: 1e-4
+  critic_hidden: 1024
+  max_grad_norm: 1.0
+  cost_chunk: 0
+output:
+  planner_checkpoint: dmpo.pt
+  value_checkpoint: value

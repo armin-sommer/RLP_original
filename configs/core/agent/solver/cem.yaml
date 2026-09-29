@@ -1,0 +1,7 @@
+# @package core.agent.solver
+_target_: rp1.core.agent.solver.CEMSolver
+batch_size: 1
+num_samples: 300
+var_scale: 1.0
+n_steps: 30
+topk: 30

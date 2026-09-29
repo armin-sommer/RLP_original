@@ -1,0 +1,28 @@
+# @package core.agent.solver
+_target_: rp1.core.agent.solver.HierarchicalCEMSolver
+batch_size: 1
+num_samples: 300
+var_scale: 1.0
+n_steps: 30
+topk: 30
+hl_dynamics: f2       # f2: the high-level world model | compose: the low-level one over real action chunks
+hwm_path: null        # f2: a high-level world model checkpoint
+bank_path: null       # compose: a bank of real action chunks
+hl_value: null        # {_target_: rp1.training.harness.checkpointing.load_metric, name: <macro-level value>}
+hl_cost: value        # value | latent
+hl_opt: cem           # cem | adam
+hl_lr: 0.1
+hl_adam_steps: 30
+hl_horizon: 8         # macro steps
+hl_samples: 512
+hl_iters: 8
+hl_topk: 0            # 0 = a tenth of hl_samples
+hl_amax: 3.0
+ll_samples: null      # null = num_samples
+ll_iters: null        # null = n_steps
+ll_topk: 0            # 0 = a tenth of the low-level samples
+ll_amax: 3.5
+ll_clamp: false       # the flat CEM baseline does not clamp its candidates
+subgoal_index: 0      # the predicted waypoint the low level plans toward
+oracle_subgoal: false
+cache_path: null      # oracle_subgoal: the dense latent cache of the evaluation dataset

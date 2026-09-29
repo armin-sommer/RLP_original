@@ -1,0 +1,12 @@
+# @package core.agent.value
+head: quasimetric
+hidden_dim: 256
+depth: 2
+embedding_dim: 128
+num_components: 8
+symmetric: false
+softplus: true
+scale: 1.0
+sym_frac: 0.5
+alpha_init: 0.75
+representation_dim: 64

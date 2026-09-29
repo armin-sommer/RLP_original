@@ -1,0 +1,17 @@
+# @package _global_
+defaults:
+  - /utils/logging: default
+  - _self_
+entrypoint: {_target_: rp1.training.data.job.cache_latents.run}
+runtime:
+  device: auto
+preparation:
+  wm: ???
+  dataset: ???
+  out: ???
+  state_key: null
+  batch_size: 256
+  image_size: 224
+  max_rows: null
+  train_res: null
+  max_episodes: null

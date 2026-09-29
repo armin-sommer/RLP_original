@@ -1,0 +1,8 @@
+# @package core.world_model
+# the authors' PLDM checkpoint, converted into the LeWM key layout by the
+# convert_pldm job; the architecture is LeWM's
+defaults:
+  - lewm
+  - _self_
+name: pldm
+checkpoint: assets/core/world_model/cube_pldm

@@ -1,0 +1,13 @@
+# @package _global_
+defaults:
+  - /utils/logging: default
+  - _self_
+entrypoint: {_target_: rp1.training.data.job.collect_tworoom_mixed.run}
+runtime:
+  seed: 7
+preparation:
+  expert: 300
+  random: 300
+  num_envs: 10
+  max_steps: 100
+  out: outputs/data/tworoom_mixed.lance

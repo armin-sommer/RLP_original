@@ -1,0 +1,8 @@
+{
+  "_target_": "rp1.core.agent.value.head.QuasimetricHead",
+  "latent_dim": 192,
+  "hidden_dim": 256,
+  "embed_dim": 128,
+  "depth": 2,
+  "sym_frac": 0.5
+}

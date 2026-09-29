@@ -1,0 +1,11 @@
+# @package _global_
+defaults:
+  - /utils/logging: default
+  - _self_
+entrypoint: {_target_: rp1.training.data.job.subsample_cache.run}
+preparation:
+  inp: ???
+  out: ???
+  frameskip: 5
+  phases: 1
+  cache_mmap: false

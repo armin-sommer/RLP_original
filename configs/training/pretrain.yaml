@@ -1,0 +1,33 @@
+defaults:
+  - /data: ogb_cube_lewm
+  - /core/world_model: lewm
+  - /utils/logging: default
+  - _self_
+entrypoint:
+  _target_: rp1.training.phases.world_model.trainer.run
+runtime:
+  seed: 3072
+  device: auto
+training:
+  initial_weights: null
+  max_skipped_gradients: null
+  trainer:
+    max_epochs: 100
+    devices: auto
+    accelerator: auto
+    precision: bf16-mixed
+    gradient_clip_val: 1.0
+  optimizer:
+    type: AdamW
+    lr: 5e-5
+    weight_decay: 1e-3
+  loss:
+    sigreg:
+      weight: 0.09
+      kwargs:
+        knots: 17
+        num_proj: 1024
+output:
+  model_name: lewm_cube
+  checkpoint_epoch_interval: 1
+  save_every_steps: 0

@@ -1,0 +1,16 @@
+# @package _global_
+# The authors' pool (`pixi run prepare job=fetch_dataset preparation.dataset=tworoom`),
+# which stores the agent position as `pos_agent` where the collected lance has `state`.
+defaults:
+  - tworoom
+  - _self_
+data:
+  path: ${oc.env:RP1_DATA_HOME,${oc.env:HOME}/.cache/rp1}/datasets/tworoom/tworoom.h5
+benchmark:
+  callables:
+    - method: _set_state
+      args:
+        state: {value: pos_agent}
+    - method: _set_goal_state
+      args:
+        goal_state: {value: goal_pos_agent}

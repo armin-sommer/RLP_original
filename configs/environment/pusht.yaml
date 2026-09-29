@@ -1,0 +1,4 @@
+# @package environment
+env_name: swm/PushT-v1
+record_path: null
+num_envs: ${benchmark.num_episodes}

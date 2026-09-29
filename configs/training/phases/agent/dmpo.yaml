@@ -1,0 +1,36 @@
+# @package _global_
+# DMPO baseline (arXiv:2310.04590): the learned MPC inner loop, trained against a
+# frozen value through the frozen world model.
+defaults:
+  - /core/agent/planner: dmpo
+  - /core/agent/value: temporal_distance
+  - /utils/logging: default
+  - _self_
+entrypoint: {_target_: rp1.training.phases.agent.dmpo.run}
+runtime:
+  device: auto
+  seed: 0
+training:
+  wm: ???
+  cache: ???         # latent cache at one row per action block
+  h5: ???            # the build_action_h5 job's output
+  init_value: ???    # the offline value (value_td); DMPO never updates it
+  cache_mmap: true
+  steps: 2000
+  batch: 32
+  frameskip: 5
+  max_delta: 10
+  p_cross: 0.3
+  actor_lr: 1e-4
+  actor_lr_final: 1e-5
+  weight_decay: 1e-5
+  max_grad_norm: 1.0     # the reference implementation's
+  mean_weight: 0.0       # average over inner iterations (rp1 recipe knob; off for DMPO)
+  temporal_objective: terminal
+  cost_chunk: 0          # rollout chunk for the sampled plans; 0 = one batch
+  warm_start_every: 0    # train the shift model every n-th step (0 = cold start only,
+                         # which is what the open-loop eval protocol deploys)
+  train_receding: 1      # plan blocks executed between the two decisions of a warm-start step
+output:
+  planner_checkpoint: dmpo.pt
+  value_checkpoint: value

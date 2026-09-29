@@ -1,0 +1,8 @@
+# @package core.agent.solver
+_target_: rp1.methods.rp1.solver.RP1Solver
+checkpoint:
+  _target_: rp1.training.harness.checkpointing.load_planner
+  path: ???
+  value_path: null  # override the value recorded in the checkpoint
+graphed: false  # CUDA-graphed refinement; needs a static batch
+graph_warmup_iters: 5

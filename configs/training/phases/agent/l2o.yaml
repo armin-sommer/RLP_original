@@ -1,0 +1,35 @@
+# @package _global_
+# L2O-MPC baseline (arXiv:2212.02603): DAgger imitation of a many-sample MPPI
+# expert through the frozen world model and frozen value.
+defaults:
+  - /core/agent/planner: l2o
+  - /core/agent/value: temporal_distance
+  - /utils/logging: default
+  - _self_
+entrypoint: {_target_: rp1.training.phases.agent.l2o.run}
+runtime:
+  device: auto
+  seed: 0
+training:
+  wm: ???
+  cache: ???         # latent cache at one row per action block
+  h5: ???            # the build_action_h5 job's output
+  init_value: ???    # the offline value (value_td); L2O never updates it
+  cache_mmap: true
+  steps: 2000
+  save_every: 0          # also save a planner snapshot every N steps
+  batch: 16
+  frameskip: 5
+  max_delta: 10
+  p_cross: 0.3
+  actor_lr: 1e-3         # paper: Adam 1e-3 (1e-4 on its hardest task)
+  actor_lr_final: 1e-4
+  weight_decay: 0.0      # the paper reports plain Adam
+  max_grad_norm: 10.0
+  dagger_rounds: 20      # paper: 20 DAgger iterations
+  beta_decay: 0.8        # paper: beta_k = 0.8^k
+  temporal_objective: terminal
+  cost_chunk: 0          # rollout chunk for the sampled plans; 0 = one batch
+output:
+  planner_checkpoint: l2o.pt
+  value_checkpoint: value

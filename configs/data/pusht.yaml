@@ -1,0 +1,6 @@
+# @package data
+# the authors' expert pool, `pixi run prepare job=fetch_dataset preparation.dataset=pusht`
+path: ${oc.env:RP1_DATA_HOME,${oc.env:HOME}/.cache/rp1}/datasets/pusht/pusht_expert_train.h5
+stats: ${data.path}
+cache_dir: null
+keys_to_cache: [action]

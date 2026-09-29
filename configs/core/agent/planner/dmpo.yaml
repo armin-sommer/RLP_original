@@ -1,0 +1,25 @@
+# @package core.agent.planner
+# the reference's quadrotor hyperparameters (arXiv:2310.04590 Sec. IV)
+horizon: 5
+iterations: 1
+num_samples: 256       # fixes the actor's input width
+hidden: 256            # single ReLU hidden layer
+action_range: 1.0      # the env's raw action box is [-action_range, action_range];
+                       # DMPO clips to it per-dimension after z-scoring, as the
+                       # reference does with action_lows/action_highs. null =
+                       # fall back to the symmetric action_limit below.
+action_limit: 2.5      # symmetric fallback clip; a bound, not a tuned trust region
+init_std: 1.0          # initial sampling covariance (diagonal)
+temperature: 0.05      # MPPI temperature of the update the actor residuals on
+step_size: 0.8         # MPPI dynamic-mirror-descent step size
+scale_costs: true      # min-max scale costs before the MPPI softmax
+gated: true            # gating term interpolating MPPI and learned means
+residual: true         # learn a residual on the MPPI update (vs. on the plan)
+learn_std: true        # multiplicative learned covariance update
+use_shift: true        # learned warm-start (shift) model
+gate_activation: tanh  # reference code; the paper describes sigmoid
+init_scale: 0.001      # last-layer init N(0, init_scale) -> near-zero residual
+mean_search_std: 0.1   # on-policy search width over the mean (PPO objective only)
+std_search_std: 0.01   # on-policy search width over the covariance
+halton: true           # fixed quasi-random sample set
+seed_val: 0            # sample-set seed

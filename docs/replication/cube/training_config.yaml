@@ -1,0 +1,106 @@
+# The training and evaluation settings of the vendored Cube LeWM (assets/core/world_model/cube_lewm),
+# trained from scratch.
+
+variant: lewm_scratch_cls        # entire encoder trained from scratch, CLS readout
+
+data:
+  source: quentinll/lewm-cube    # canonical DINO-WM cube dataset on HF (h5 -> lance convert)
+  episodes: 10000
+  frames: 2010000                # ~201 steps/episode
+  pixels: 224x224 RGB (stored as JPEG; decoded to [0,1] then ImageNet-normalized)
+  action_dim: 5
+
+windowing:
+  history_size: 3
+  num_preds: 1
+  frameskip: 5
+  span: 20                       # (history+preds) * frameskip raw steps per clip
+  obs_offsets: [0, 5, 10, 15]    # frames fed to the model
+  action_chunking: all 20 raw actions -> reshape (4, 25)   # frameskip*action_dim per step
+  clip_starts: every valid start within each episode (start <= ep_len - span)
+  shuffle: per-epoch permutation, np.random.default_rng(1000 + epoch)
+
+action_preprocessing:            # see REPLICATION_CUBE.md, "Action normalization"
+  nan_handling: np.nan_to_num(actions, nan=0.0)   # dataset contains NaN action rows
+  normalization: per-dim z-score with stats over the FULL dataset action column
+  # exact constants (must match sklearn StandardScaler fit at eval time):
+  mean: [0.010831, -0.003126, 0.002633, 0.000422, 0.15846]
+  std:  [0.2887, 0.392736, 0.641535, 0.391823, 0.249935]
+
+model:
+  encoder:                       # stable_pretraining.backbone.utils.vit_hf
+    arch: ViT-tiny (HF ViTModel), from scratch (pretrained=false)
+    size: tiny                   # hidden 192, 12 layers, 3 heads
+    patch_size: 14
+    image_size: 224
+    latent: CLS token (last_hidden_state[:, 0]), dim 192
+  predictor:                     # stable_worldmodel.wm.lewm.module.Predictor (AdaLN blocks)
+    num_frames: 3                # = history_size
+    input_dim: 192
+    hidden_dim: 192
+    output_dim: 192
+    depth: 6
+    heads: 16
+    mlp_dim: 2048
+    dim_head: 64
+    dropout: 0.1
+  action_encoder:                # stable_worldmodel.wm.lewm.module.Embedder
+    input_dim: 25                # frameskip(5) * action_dim(5)
+    emb_dim: 192
+  projector:      MLP(192, 2048, 192, norm=BatchNorm1d)   # for SIGReg branch
+  pred_projector: MLP(192, 2048, 192, norm=BatchNorm1d)
+
+loss:
+  pred: MSE(predicted next latent, encoder latent of frame t+1)   # num_preds=1
+  sigreg:
+    weight: 0.09
+    knots: 17
+    num_proj: 1024
+
+optimization:
+  optimizer: AdamW
+  lr: 5.0e-5
+  weight_decay: 1.0e-3
+  batch_size: 128
+  epochs: 22                     # ~313k optimizer steps total
+  schedule: cosine decay to 0, linear warmup over first 1% of total steps
+  grad_clip: 1.0
+  grad_guard: skip optimizer step if clip_grad_norm_ returns non-finite  # see REPLICATION_CUBE.md, "Non-finite gradients"
+  precision: bf16 autocast (params fp32)
+  hardware: 1x H100
+
+eval:
+  command: >
+    pixi run evaluate benchmark=cube_lewm
+    core.world_model.checkpoint=<checkpoint>
+    data.path=<the training dataset as lance>
+    runtime.bfloat16=true
+  dataset: the training dataset itself (quentinll/lewm-cube, converted to lance)
+  num_eval: 50
+  goal_offset_steps: 25          # goal image/state = dataset state 25 raw steps after start
+  eval_budget: 50
+  seed: 42                       # fixes the 50 sampled (episode, start) pairs
+  img_size: 224
+  world:
+    env_name: swm/OGBCube-v0
+    env_type: single             # single-cube only; success = block within 4cm of target
+    ob_type: states
+  plan_config:
+    horizon: 5
+    receding_horizon: 5
+    action_block: 5              # = frameskip
+  solver:                        # CEMSolver
+    num_samples: 300
+    n_steps: 30
+    topk: 30
+    var_scale: 1.0
+    batch_size: 1
+    seed: 42
+  callables:                     # episode init from dataset row
+    - set_state: {qpos, qvel}
+    - set_target_pos: {cube_id: 0, target_pos: goal_privileged_block_0_pos,
+                       target_quat: goal_privileged_block_0_quat}
+
+results:
+  success_rate: 84.0             # 50 episodes
+  random_policy_baseline: 42.0   # same protocol and seed

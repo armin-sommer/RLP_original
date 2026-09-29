@@ -1,0 +1,5 @@
+# @package data
+path: tworoom_play.lance
+stats: ${data.path}
+cache_dir: null
+keys_to_cache: [action]

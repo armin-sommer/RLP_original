@@ -1,0 +1,23 @@
+# @package _global_
+defaults:
+  - /environment: cube
+  - /data: ogb_cube
+  - /core/agent/policy: random
+  - /core/agent/solver: cem
+  - /core/agent/value: latent
+  - _self_
+benchmark:
+  # held out: the agent trains on episodes 0-7999
+  episode_range: "8000:10000"
+  callables:
+    - method: set_state
+      args:
+        qpos: {value: qpos}
+        qvel: {value: qvel}
+    - method: set_target_pos
+      args:
+        cube_id: {value: 0, in_dataset: false}
+        target_pos: {value: goal_privileged_block_0_pos}
+        target_quat: {value: goal_privileged_block_0_quat}
+output:
+  filename: ogb_cube_results.txt

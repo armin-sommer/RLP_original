@@ -1,0 +1,3 @@
+# @package core.agent.solver
+defaults:
+  - /methods/rp1/solver@_here_

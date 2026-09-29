@@ -1,0 +1,3 @@
+# @package core.agent.policy
+kind: world_model
+checkpoint: ${core.world_model.checkpoint}

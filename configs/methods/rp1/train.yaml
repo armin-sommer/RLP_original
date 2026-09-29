@@ -1,0 +1,57 @@
+# @package _global_
+# The paper's RP1 configuration (Table 6): one setting for every environment and world model.
+defaults:
+  - /methods/rp1/net
+  - /core/agent/value: temporal_distance
+  - /utils/logging: default
+  - _self_
+entrypoint: {_target_: rp1.methods.rp1.train.run}
+runtime:
+  device: auto
+  seed: 0
+training:
+  cache: ???
+  cache_td: ???        # the dense cache, one row per primitive step, the critic trains on
+  near_frac: 0.0        # fraction of in-episode critic goals drawn 1..near_max steps ahead
+  near_max: 3
+  max_episodes: null    # train on source episodes [0, N) of both caches
+  h5: ???
+  wm: ???
+  init_value: null
+  cache_mmap: true
+  steps: 12000          # step cap; snapshots every ckpt_every feed checkpoint selection
+  batch: 256
+  ckpt_every: 2000      # save a deployable planner snapshot every N steps (0 = off)
+  window_lag: null      # primitive-step frame spacing of a windowed init_value
+                        # teacher (null = the action block); must equal the
+                        # frameskip so deployed windows match trained ones
+  frameskip: 5
+  max_delta: 20
+  band_mix: null        # goal bands in blocks, e.g. [6, 21]: a band drawn uniformly, then an offset within it
+  p_cross: 0.3
+  actor_lr: 3e-4
+  actor_weight_decay: 1e-5
+  actor_lr_final: 3e-5
+  mean_weight: 0.3
+  ac_weight: 0.5        # anti-constancy regularizer weight (0 = off)
+  expectile: 0.1
+  expectile_final: 0.03
+  n_step: 1
+  gamma: 0.98
+  td_batch: 1024
+  td_p_cross: 0.3
+  td_max_delta: null
+  td_n_buckets: 10
+  critic_lr: 1e-3
+  critic_lr_final: 1e-4
+  critic_wd: 1e-4
+  huber_beta: 1.0
+  pretrain: -1
+  ema_tau: 0.005
+  freeze_critic_frac: 0.8
+  expand_weight: 0.0
+  replay_prob: 0.0
+  action_stats: null
+output:
+  planner_checkpoint: planner.pt
+  value_checkpoint: value

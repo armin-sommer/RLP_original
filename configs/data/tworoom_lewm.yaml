@@ -1,0 +1,22 @@
+# @package data
+# produced by `pixi run prepare job=collect_tworoom_mixed`
+cache_dir: null
+image_size: 224
+action_stats: null
+train_split: 0.9
+train_episodes: null  # train on episodes [0, N) only; null = all
+loader:
+  batch_size: 128
+  num_workers: 6
+  drop_last: true
+  persistent_workers: true
+  prefetch_factor: 3
+  pin_memory: true
+  shuffle: true
+dataset:
+  name: tworoom_play.lance
+  num_steps: 4
+  frameskip: 5
+  keys_to_load: [pixels, action, proprio]
+  keys_to_cache: [action, proprio]
+  keys_to_merge: {}

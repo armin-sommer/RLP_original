@@ -1,0 +1,24 @@
+# @package _global_
+defaults:
+  - /environment: reacher
+  - /data: reacher
+  - /core/agent/policy: random
+  - /core/agent/solver: cem
+  - /core/agent/value: latent
+  - _self_
+planning:
+  # open loop like every environment, not replanning after each chunk
+  receding_horizon: 5
+benchmark:
+  # held out: the agent trains on episodes 0-7999
+  episode_range: "8000:10000"
+  callables:
+    - method: set_state
+      args:
+        qpos: {value: qpos}
+        qvel: {value: qvel}
+    - method: set_target_qpos
+      args:
+        target_qpos: {value: goal_qpos}
+output:
+  filename: reacher_results.txt

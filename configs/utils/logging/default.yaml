@@ -1,0 +1,12 @@
+# @package logging
+run_root: logs
+level: INFO
+wandb:
+  mode: disabled
+  config:
+    entity: null
+    project: rp1
+    name: null
+    id: null
+    resume: allow
+    log_model: false

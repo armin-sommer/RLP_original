@@ -1,0 +1,41 @@
+{
+  "rows": 2010000,
+  "pixels_storage": "JPEG blobs (lance binary col; converted from h5)",
+  "pixels_resolution": [
+    224,
+    224
+  ],
+  "pixels_mode": "RGB",
+  "action_dim": 5,
+  "action_mean": [
+    0.010831,
+    -0.003126,
+    0.002633,
+    0.000422,
+    0.15846
+  ],
+  "action_std": [
+    0.2887,
+    0.392736,
+    0.641535,
+    0.391823,
+    0.249935
+  ],
+  "action_minmax": [
+    [
+      -1.0,
+      -1.0,
+      -1.0,
+      -1.0,
+      -0.637
+    ],
+    [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.908
+    ]
+  ],
+  "episodes": 10000
+}
