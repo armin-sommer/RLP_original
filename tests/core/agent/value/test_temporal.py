@@ -1,6 +1,6 @@
 import torch
 
-from rp1.core.agent.value.temporal import trajectory_value
+from rp1.core.agent.value.temporal import trajectory_value, window_pair, windowed_terminal_value
 
 
 def test_tel_exact_preserves_terminal_gradient_and_adds_start_baseline() -> None:
@@ -16,3 +16,16 @@ def test_tel_exact_preserves_terminal_gradient_and_adds_start_baseline() -> None
     telescoping_gradient = torch.autograd.grad(telescoping.sum(), trajectory)[0]
     assert torch.equal(terminal_gradient, telescoping_gradient)
     assert torch.equal(telescoping, terminal - value(start, goal))
+
+
+def test_windowed_terminal_value_matches_the_window_pair_layout() -> None:
+    def value(state: torch.Tensor, goal: torch.Tensor) -> torch.Tensor:
+        return (state * torch.arange(1.0, state.shape[-1] + 1)).sum(dim=-1) - goal.sum(dim=-1)
+
+    trajectory = torch.randn(2, 4, 3)
+    goal = torch.randn(2, 3)
+    for context in (1, 2, 3, 6):
+        expected = value(*window_pair(trajectory, goal, context))
+        assert torch.equal(windowed_terminal_value(value, trajectory, goal, context), expected)
+    two = windowed_terminal_value(value, trajectory, goal, 2)
+    assert torch.equal(two, value(torch.cat([trajectory[:, -2], trajectory[:, -1]], -1), goal.repeat(1, 2)))

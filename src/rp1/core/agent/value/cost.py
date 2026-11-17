@@ -122,14 +122,9 @@ class MetricCost(nn.Module):
         offsets = torch.arange(context, device=predicted.device) - context + 1
         indices = (end[:, None] + offsets[None]).clamp_min(0)
         view = indices[:, None, :, None].expand(predicted.shape[0], predicted.shape[1], context, predicted.shape[-1])
-        window = predicted.gather(-2, view)
-        pred = window.flatten(start_dim=-2)
-        if context == 2:
-            current, previous = window[..., -1, :], window[..., -2, :]
-            pred = torch.cat([current, current - previous], dim=-1)
-            goal = torch.cat([goal, torch.zeros_like(goal)], dim=-1)
-        elif context > 2:
-            goal = torch.cat([goal] * context, dim=-1)
+        # the layout the critic trains on (``LatentCache.windowed``): frames oldest first, one goal frame tiled
+        pred = predicted.gather(-2, view).flatten(start_dim=-2)
+        goal = torch.cat([goal] * context, dim=-1)
 
         if goal.ndim < pred.ndim:
             goal = goal.unsqueeze(1)

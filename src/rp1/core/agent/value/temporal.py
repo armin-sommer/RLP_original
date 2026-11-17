@@ -109,23 +109,12 @@ def windowed_terminal_value(
 ) -> torch.Tensor:
     """Terminal value of a ``context``-frame window, as ``MetricCost`` forms it.
 
-    Window values take ``context * D`` inputs. This reproduces
-    :class:`~rp1.core.agent.value.cost.MetricCost`'s window on a differentiable
-    imagined trajectory: the last ``context`` frames concatenated (frames before
-    the trajectory start clamped to its first frame), the goal tiled to match,
-    and the two-frame case expressed as ``[current, current - previous]``.
+    Window values take ``context * D`` inputs: the last ``context`` imagined
+    frames concatenated oldest first and the goal tiled to match (:func:`window_pair`).
     """
     if context < 1:
         raise ValueError(f"invalid value context width: {context}")
-    if context == 1:
-        return value(trajectory[:, -1], goal)
-    horizon = trajectory.shape[1]
-    indices = (torch.arange(context, device=trajectory.device) + horizon - context).clamp_min(0)
-    window = trajectory.index_select(1, indices)
-    if context == 2:
-        current, previous = window[:, -1], window[:, -2]
-        return value(torch.cat([current, current - previous], dim=-1), torch.cat([goal, torch.zeros_like(goal)], -1))
-    return value(window.flatten(start_dim=1), goal.repeat(1, context))
+    return value(*window_pair(trajectory, goal, context))
 
 
 __all__ = [
